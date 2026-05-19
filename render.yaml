@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: adaptive-learning-backend
+    runtime: java
+    runtimeVersion: "17"
+    region: ohio
+    plan: free
+    
+    # Build configuration
+    buildCommand: "mvn clean package -DskipTests -q"
+    
+    # Start command - JAR file location is crucial
+    startCommand: "java -Xmx512m -Xms256m -jar target/adaptive-learning-backend-1.0.0.jar"
+    
+    # Port configuration
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: JAVA_OPTS
+        value: "-Xmx512m -Xms256m -Dserver.port=${PORT}"
+      - key: SPRING_PROFILES_ACTIVE
+        value: "prod"
+    
+    # Health check configuration
+    healthCheckPath: "/actuator/health"
+    
+    # Auto-deploy on push to main
+    autoDeploy: true
+    
+    # Build and deployment settings
+    preDeployCommand: ""
+    
+    # Routes
+    routes:
+      - type: http
+        source: /
+        destination: http://localhost:8080
